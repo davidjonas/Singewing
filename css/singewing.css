@@ -4,5 +4,143 @@
 }
 
 body {
+  font-family: 'Scope One', serif;
+}
 
+section {
+  width: 100vw;
+  height:100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+#intro h1 {
+  display: block;
+  font-size: 7vw
+}
+
+#introForm {
+  display: block;
+  /*border-top: 5px solid #fefefe;*/
+  border-bottom: 5px solid #fefefe;
+  padding:30px;
+  position: relative;
+}
+
+#introForm input {
+  font-size: 4vw;
+}
+
+#debug {
+  height: 200px;
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1000;
+  border-top: 1px solid black;
+  color: #fefefe;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  overflow-x: scroll;
+  line-height: 16px;
+  padding: 5px;
+}
+
+#debug .contents
+{
+  width:100%;
+  min-height:100%;
+  bottom:0;
+}
+
+/* ===  Input form formatting    === */
+input {
+
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  color: white;
+  background-color: transparent;
+  font-size: 36.66667px;
+  transition: .3s ease;
+  text-align: center;
+  font-family: 'Scope One', serif;
+}
+
+input:focus {
+  outline: none;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #333 inset;
+  -webkit-text-fill-color: white !important;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #fefefe;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #fefefe;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #fefefe;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #fefefe;
+}
+
+/* === Fade in ===*/
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 2s;
+  animation-duration: 2s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+/* === Color pallete === */
+
+.color_1
+{
+  background-color: #86c8d6;
+  color: #fefefe;
+}
+
+.color_2
+{
+  background-color: #d6eaf1;
+  color: #444;
+}
+
+.color_3
+{
+  background-color: #e0c87e;
+  color: #000;
+}
+
+.color_4
+{
+  background-color: #ffcce6;
+  color: #fefefe;
+}
+
+.color_5
+{
+  background-color: #d35796;
+  color: #fefefe;
 }

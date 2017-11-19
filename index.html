@@ -2,17 +2,27 @@
 <html>
 <head>
   <title>Singewing space</title>
-  <link rel="stylesheet" href="singewing.css" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans+Condensed:300|Scope+One|Vollkorn+SC" rel="stylesheet">
+  <link rel="stylesheet" href="singewing.css">
   <script src="jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="singewing.js"></script>
   <script src="ui.js"></script>
 </head>
 <body>
-  <h1>Singewing space</h1>
-  <form id="intro">
-    <input type="text" id="name" />
-    <input type="button" id="connect" value="Connect"/>
-  </form>
+  <section id="intro" class="color_1">
+    <div>
+      <h1>Singewing space</h1>
+      <form id="introForm">
+        <input type="text" id="name" placeholder="What is your name?" autocomplete="off"/>
+      </form>
+    </div>
+  </section>
+  <section id="main" class="color_3">
+    <div id="debug">
+      <div class="contents">
+      </div>
+    </div>
+  </section>
 </body>
 </html>

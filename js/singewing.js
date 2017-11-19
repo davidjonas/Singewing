@@ -5,6 +5,14 @@ function UID() {
   });
 }
 
+var log = function(msg)
+{
+  var date = new Date();
+  var finalMsg = "[" + date.toLocaleDateString('en-GB') + " - " +date.toLocaleTimeString('en-GB') + "] " + msg;
+  $("#debug .contents").append($('<div class="line">'+finalMsg+'</div>'));
+}
+
+
 var Singewing = function () {
   var self = this;
   this.socket = io();
@@ -33,16 +41,16 @@ var Singewing = function () {
     self.delay = now - self.pingTime;
     var aproxServerTime = Math.round(time + self.delay/2);
     self.offset = now - aproxServerTime;
-    console.log("timeToServer: " + (time - self.pingTime) + "ms    ==>      full delay = " + self.delay + "ms");
-    console.log("Local Time:  " + now);
-    console.log("Server Time: " + time);
-    console.log("Corrected Server Time: " + aproxServerTime);
-    console.log("Approximate offset between server and browser: " + self.offset + "ms");
+    log("timeToServer: " + (time - self.pingTime) + "ms    ==>      full delay = " + self.delay + "ms");
+    log("Local Time:  " + now);
+    log("Server Time: " + time);
+    log("Corrected Server Time: " + aproxServerTime);
+    log("Approximate offset between server and browser: " + self.offset + "ms");
   });
 
   //RX - new user
   this.socket.on("newUser", function (user) {
-    console.log("NEW USER: "+ user["name"] +"!!");
+    log("NEW USER: "+ user["name"] +"!!");
     self.users.push(user);
     if(user["name"] == self.name)
     {
@@ -52,7 +60,7 @@ var Singewing = function () {
 
   //RX - registration error
   this.socket.on("registrationError", function (msg) {
-    console.log(msg);
+    log(msg);
   });
 
   //RX - Update user list Receive
@@ -63,7 +71,7 @@ var Singewing = function () {
 
 //TX - ping
 Singewing.prototype.ping = function () {
-  console.log("ping");
+  log("ping");
   this.pingTime = new Date().getTime();
   this.socket.emit("sw_ping", singewing.pingTime);
 }
@@ -89,9 +97,3 @@ var singewing = new Singewing();
 //singewing.test();
 singewing.ping();
 setInterval(function () {singewing.ping()}, 30000);
-
-$(function () {
-  $("#connect").click(function () {
-      singewing.register();
-  });
-});

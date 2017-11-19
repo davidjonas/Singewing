@@ -11,6 +11,7 @@ var Singewing = function () {
   this.socket = io();
   this.pingTime = 0;
   this.delay = 0;
+  this.offset = 0;
   this.connected = false;
   this.registered = false;
   this.users = [];
@@ -31,7 +32,13 @@ var Singewing = function () {
   this.socket.on('sw_pong', function (time){
     var now = new Date().getTime();
     self.delay = now - self.pingTime;
+    var aproxServerTime = Math.round(time + self.delay/2);
+    self.offset = now - aproxServerTime;
     console.log("pong    ==>    timeToServer: " + (time - self.pingTime) + "ms    ==>      full delay = " + self.delay + "ms");
+    console.log("Local Time:  " + now);
+    console.log("Server Time: " + time);
+    console.log("Corrected Server Time: " + aproxServerTime);
+    console.log("Approximate offset between server and browser: " + self.offset);
   });
 
   //RX - new user

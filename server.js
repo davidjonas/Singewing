@@ -104,8 +104,10 @@ io.on('connection', function(socket){
     if(index != null)
     {
       log("removing user " + users[index]["name"]);
+      io.emit("userQuit", users[index]);
       users.splice(index, 1);
       log(users.length + " users left.");
+      io.emit("updateUserList", users);
     }
     else
     {

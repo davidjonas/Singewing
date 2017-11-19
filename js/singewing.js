@@ -50,12 +50,17 @@ var Singewing = function () {
 
   //RX - new user
   this.socket.on("newUser", function (user) {
-    log("NEW USER: "+ user["name"] +"!!");
+    log(user["name"] +" Joined.");
     self.users.push(user);
     if(user["name"] == self.name)
     {
       self.registered = true;
     }
+  });
+
+  //RX - User disconnected
+  this.socket.on("userQuit", function (user){
+    log(user["name"] + " Left.");
   });
 
   //RX - registration error

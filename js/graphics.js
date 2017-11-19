@@ -5,6 +5,7 @@ function setup()
   cnv = createCanvas($("#graphics").width(), $("#graphics").height());
   cnv.parent('graphics');
   radius = 300;
+  textAlign(CENTER, CENTER);
 }
 
 function draw()
@@ -21,6 +22,9 @@ function draw()
     fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2]);
     console.log(xPos, yPos);
     ellipse(xPos,yPos,100,100);
+
+    fill(255);
+    text(singewing.users[i]["name"],xPos, yPos);
   }
 
 }

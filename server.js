@@ -1,4 +1,4 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 
 var express = require('express');
 var app = express();
@@ -55,6 +55,7 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   log("User connected");
   socket.emit('connection');
+  socket.emit("updateUserList", users); //Updating the user list automatically for new connections
 
   //test
   socket.on('test', function(){

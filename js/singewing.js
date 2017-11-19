@@ -19,7 +19,7 @@ var Singewing = function () {
   // RX - connection
   this.socket.on('connection', function(){
       self.connected = true;
-      self.updateUserList();
+      //self.updateUserList(); //This happens now automatically on the server
   });
 
   //RX - test ACK

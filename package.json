@@ -1,0 +1,17 @@
+{
+  "name": "Singewing",
+  "version": "0.0.2",
+  "description": "Singewing space demonstrator",
+  "bugs": "https://github.com/davidjonas/Singewing/issues",
+  "email": "davidjonasdesign@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidjonas/Singewing.git"
+  },
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.16.2",
+    "jquery": "^3.2.1",
+    "socket.io": "^2.0.4"
+  }
+}

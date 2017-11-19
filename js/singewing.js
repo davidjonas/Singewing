@@ -43,7 +43,7 @@ var Singewing = function () {
 
   //RX - new user
   this.socket.on("newUser", function (user) {
-    console.log("NEW USER!!");
+    console.log("NEW USER: "+ user["name"] +"!!");
     self.users.push(user);
     if(user["name"] == self.name)
     {

@@ -1,4 +1,3 @@
-
 function UID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -34,11 +33,11 @@ var Singewing = function () {
     self.delay = now - self.pingTime;
     var aproxServerTime = Math.round(time + self.delay/2);
     self.offset = now - aproxServerTime;
-    console.log("pong    ==>    timeToServer: " + (time - self.pingTime) + "ms    ==>      full delay = " + self.delay + "ms");
+    console.log("timeToServer: " + (time - self.pingTime) + "ms    ==>      full delay = " + self.delay + "ms");
     console.log("Local Time:  " + now);
     console.log("Server Time: " + time);
     console.log("Corrected Server Time: " + aproxServerTime);
-    console.log("Approximate offset between server and browser: " + self.offset);
+    console.log("Approximate offset between server and browser: " + self.offset + "ms");
   });
 
   //RX - new user
@@ -89,6 +88,7 @@ var singewing = new Singewing();
 
 //singewing.test();
 singewing.ping();
+setInterval(function () {singewing.ping()}, 30000);
 
 $(function () {
   $("#connect").click(function () {

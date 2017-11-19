@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.16.2",
     "jquery": "^3.2.1",
+    "p5": "^0.5.16",
     "socket.io": "^2.0.4"
   }
 }

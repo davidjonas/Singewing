@@ -11,7 +11,7 @@ $(function () {
       $("#main").fadeTo(500, 1);
     });
   });
-  $("#name").focus().trigger('click');
+  $("#name").focus().click();
 
   //debug console events
   $("#debug").click(function(){

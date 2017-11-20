@@ -7,10 +7,10 @@ function UID() {
 
 var log = function(msg)
 {
-  var date = new Date();
-  var finalMsg = "[" + date.toLocaleDateString('en-GB') + " - " + date.toLocaleTimeString('en-GB') + "] " + msg;
-  $("#debug .contents").append($('<div class="line">'+finalMsg+'</div>'));
-  console.log(finalMsg);
+  // var date = new Date();
+  // var finalMsg = "[" + date.toLocaleDateString('en-GB') + " - " + date.toLocaleTimeString('en-GB') + "] " + msg;
+  // $("#debug .contents").append($('<div class="line">'+finalMsg+'</div>'));
+  // console.log(finalMsg);
 }
 
 var Singewing = function () {

@@ -35,6 +35,13 @@ section {
   font-size: 4vw;
 }
 
+#registrationError {
+  text-align: center;
+  margin-top: 10px;
+  color: #ca5959;
+  display: none;
+}
+
 #debug {
   height: 200px;
   display: block;
@@ -149,8 +156,8 @@ input:-webkit-autofill {
 
 .color_3
 {
-  background-color: #e0c87e;
-  color: #000;
+  background-color: #37444e;
+  color: #fefefe;
 }
 
 .color_4

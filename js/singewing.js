@@ -55,6 +55,7 @@ var Singewing = function () {
     if(user["name"] == self.name)
     {
       self.registered = true;
+      registrationSuccess();
     }
   });
 
@@ -66,6 +67,7 @@ var Singewing = function () {
   //RX - registration error
   this.socket.on("registrationError", function (msg) {
     log(msg);
+    registrationError();
   });
 
   //RX - Update user list Receive

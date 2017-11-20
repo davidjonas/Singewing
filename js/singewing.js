@@ -75,6 +75,12 @@ var Singewing = function () {
   this.socket.on("updateUserList", function (users) {
     self.users = users;
   });
+
+  this.socket.on("beat", function(socketId)
+  {
+    var index = self.findUser(socketId);
+    self.users[index]["beat"] = true;
+  });
 };
 
 //TX - ping
@@ -99,6 +105,24 @@ Singewing.prototype.register = function () {
 Singewing.prototype.updateUserList = function () {
   this.socket.emit("updateUserList");
 };
+
+//TX - beat
+Singewing.prototype.beat = function()
+{
+  this.socket.emit("beat");
+}
+
+Singewing.prototype.findUser = function (socketId) {
+  for (var i=0; i<this.users.length; i++)
+  {
+    if(this.users[i]["socketId"] == socketId)
+    {
+      return i;
+    }
+  }
+
+  return null;
+}
 
 var singewing = new Singewing();
 

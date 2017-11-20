@@ -28,9 +28,13 @@ function draw()
 
     var alpha = 30;
 
-    if(singewing.users[i]["name"] == singewing.name && mouseIsPressed)
+    if((singewing.users[i]["name"] == singewing.name && mouseIsPressed) || singewing.users[i]["beat"])
     {
       alpha = 255;
+      if(singewing.users[i]["beat"])
+      {
+        singewing.users[i]["beat"]=false;
+      }
     }
 
     fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
@@ -69,6 +73,11 @@ function draw()
     noStroke();
     text(singewing.users[i]["name"],xPos, yPos);
   }
+}
+
+function mousePressed()
+{
+  singewing.beat();
 }
 
 function windowResized(){

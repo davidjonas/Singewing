@@ -4,7 +4,8 @@ function setup()
 {
   cnv = createCanvas($("#graphics").width(), $("#graphics").height());
   cnv.parent('graphics');
-  radius = width/3;
+  radiuses = [width/4, height/4];
+  radius = min(radiuses);
   textAlign(CENTER, CENTER);
 }
 

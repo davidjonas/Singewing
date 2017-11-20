@@ -8,11 +8,10 @@ function UID() {
 var log = function(msg)
 {
   var date = new Date();
-  var finalMsg = "[" + date.toLocaleDateString('en-GB') + " - " +date.toLocaleTimeString('en-GB') + "] " + msg;
+  var finalMsg = "[" + date.toLocaleDateString('en-GB') + " - " + date.toLocaleTimeString('en-GB') + "] " + msg;
   $("#debug .contents").append($('<div class="line">'+finalMsg+'</div>'));
   console.log(finalMsg);
 }
-
 
 var Singewing = function () {
   var self = this;
@@ -28,7 +27,6 @@ var Singewing = function () {
   // RX - connection
   this.socket.on('connection', function(){
       self.connected = true;
-      //self.updateUserList(); //This happens now automatically on the server
   });
 
   //RX - test ACK
@@ -88,7 +86,7 @@ Singewing.prototype.ping = function () {
   log("ping");
   this.pingTime = new Date().getTime();
   this.socket.emit("sw_ping", singewing.pingTime);
-}
+};
 
 //TX - test
 Singewing.prototype.test = function() {
@@ -99,7 +97,7 @@ Singewing.prototype.test = function() {
 Singewing.prototype.register = function () {
   this.name = $("#name").val();
   this.socket.emit("register", this.name);
-}
+};
 
 //TX - Get/Update user list
 Singewing.prototype.updateUserList = function () {
@@ -115,17 +113,15 @@ Singewing.prototype.beat = function()
 Singewing.prototype.findUser = function (socketId) {
   for (var i=0; i<this.users.length; i++)
   {
-    if(this.users[i]["socketId"] == socketId)
+    if(this.users[i]["socketId"] == socketId || this.users[i]["name"] == socketId)
     {
       return i;
     }
   }
-
   return null;
 }
 
 var singewing = new Singewing();
 
-//singewing.test();
 singewing.ping();
 setInterval(function () {singewing.ping()}, 30000);

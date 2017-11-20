@@ -28,7 +28,7 @@ function draw()
 
     var alpha = 30;
 
-    if((singewing.users[i]["name"] == singewing.name && mouseIsPressed) || singewing.users[i]["beat"])
+    if(singewing.users[i]["beat"])
     {
       alpha = 255;
       if(singewing.users[i]["beat"])
@@ -39,7 +39,7 @@ function draw()
 
     fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
 
-    if(width > 600)
+    if(width > 1000)
     {
       ellipse(xPos,yPos,width*0.1 + pulse,width*0.1 + pulse);
       ellipse(xPos,yPos,width*0.08 + pulse,width*0.08 + pulse);
@@ -52,6 +52,8 @@ function draw()
         stroke(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], 100);
         strokeWeight(5);
         ellipse(xPos,yPos,width*0.1,width*0.1);
+        strokeWeight(1);
+        ellipse(xPos,yPos,width*0.1+9,width*0.1+9);
       }
     }
     else {
@@ -66,6 +68,8 @@ function draw()
         stroke(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], 100);
         strokeWeight(5);
         ellipse(xPos,yPos,width*0.3,width*0.3);
+        strokeWeight(1);
+        ellipse(xPos,yPos,width*0.3+9,width*0.3+9);
       }
     }
 
@@ -78,6 +82,7 @@ function draw()
 function mousePressed()
 {
   singewing.beat();
+  singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
 }
 
 function windowResized(){

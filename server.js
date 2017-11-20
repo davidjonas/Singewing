@@ -59,7 +59,7 @@ io.on('connection', function(socket){
 
   //test
   socket.on('test', function(){
-    log("Test request received... Emitting ack.");
+    //log("Test request received... Emitting ack.");
     socket.emit('ack');
   });
 
@@ -67,7 +67,7 @@ io.on('connection', function(socket){
   socket.on('sw_ping', function (time){
     var now = new Date().getTime();
     socket.emit('sw_pong', now);
-    log("ping received, sent pong ==> time diff: " + (now - time) + "ms");
+    //log("ping received, sent pong ==> time diff: " + (now - time) + "ms");
   });
 
   //register
@@ -81,7 +81,7 @@ io.on('connection', function(socket){
 
     if(validateUser(user))
     {
-      log("User validated");
+      //log("User validated");
       users.push(user);
       io.emit("newUser", user);
       log(users.length + " Users online");

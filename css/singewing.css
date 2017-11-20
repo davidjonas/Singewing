@@ -140,6 +140,25 @@ input:-webkit-autofill {
   100% {opacity: 1;}
 }
 
+/* === Vingnette ===*/
+
+.vignette
+{
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    padding: 0;
+    margin:0;
+    -webkit-box-shadow: inset 0px 0px 50vw 5vw rgba(0,0,0,0.09);
+    -moz-box-shadow: inset 0px 0px 50vw 5vw rgba(0,0,0,0.09);
+    box-shadow:inset 0px 0px 50vw 5vw rgba(0,0,0,0.09);
+    pointer-events:none;
+    background-color:rgba(230, 187, 118, 0.1);
+    z-index: 1002;
+}
+
 /* === Color pallete === */
 
 .color_1

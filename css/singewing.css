@@ -28,6 +28,7 @@ section {
   border-bottom: 5px solid #fefefe;
   padding:30px;
   position: relative;
+  z-index: 1001;
 }
 
 #introForm input {

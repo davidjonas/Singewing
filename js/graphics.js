@@ -25,7 +25,15 @@ function draw()
     var pulse = sin(frameCount/100 + i) * 10;
 
     noStroke();
-    fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], 30);
+
+    var alpha = 30;
+
+    if(singewing.users[i]["name"] == singewing.name && mouseIsPressed)
+    {
+      alpha = 255;
+    }
+
+    fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
 
     if(width > 600)
     {

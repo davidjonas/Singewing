@@ -4,7 +4,7 @@ function setup()
 {
   cnv = createCanvas($("#graphics").width(), $("#graphics").height());
   cnv.parent('graphics');
-  radius = 300;
+  radius = width/3;
   textAlign(CENTER, CENTER);
 }
 
@@ -21,7 +21,7 @@ function draw()
     var yPos = sin(angle) * radius + height/2;
     fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2]);
     console.log(xPos, yPos);
-    ellipse(xPos,yPos,100,100);
+    ellipse(xPos,yPos,width*0.1,width*0.1);
 
     fill(255);
     text(singewing.users[i]["name"],xPos, yPos);

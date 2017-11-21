@@ -23,6 +23,9 @@ var Singewing = function () {
   this.registered = false;
   this.users = [];
   this.name;
+  this.beats = [];
+  this.BPM = 0;
+  this.smoothing = 20;
 
   // RX - connection
   this.socket.on('connection', function(){
@@ -74,10 +77,12 @@ var Singewing = function () {
     self.users = users;
   });
 
-  this.socket.on("beat", function(socketId)
+  //RX - Beat
+  this.socket.on("beat", function(args)
   {
-    var index = self.findUser(socketId);
+    var index = self.findUser(args["socketId"]);
     self.users[index]["beat"] = true;
+    self.users[index]["BPM"] = args["BPM"];
   });
 };
 
@@ -107,7 +112,33 @@ Singewing.prototype.updateUserList = function () {
 //TX - beat
 Singewing.prototype.beat = function()
 {
-  this.socket.emit("beat");
+  var correctedTime = new Date().getTime() + this.offset;
+  this.socket.emit("beat", {"time":correctedTime, "BPM": this.BPM});
+
+  //clear if current beat interval bigger than 2 seconds;
+  if(this.beats.length > 0 && (correctedTime - this.beats[this.beats.length-1]) > 2000)
+  {
+    this.beats = [];
+  }
+  this.beats.push(correctedTime);
+  if(this.beats.length == this.smoothing)
+  {
+    this.beats.shift();
+  }
+
+  if(this.beats.length>1)
+  {
+    for(var i=1; i<this.beats.length; i++)
+    {
+      this.BPM += (this.beats[i] - this.beats[i-1]);
+    }
+
+    this.BPM = this.BPM/(this.smoothing-1);
+
+    this.BPM = Math.round((1000/this.BPM)*60);
+
+    this.users[this.findUser(this.name)]["BPM"] = this.BPM;
+  }
 }
 
 Singewing.prototype.findUser = function (socketId) {
@@ -124,4 +155,4 @@ Singewing.prototype.findUser = function (socketId) {
 var singewing = new Singewing();
 
 singewing.ping();
-setInterval(function () {singewing.ping()}, 30000);
+setInterval(function () {singewing.ping()}, 5000);

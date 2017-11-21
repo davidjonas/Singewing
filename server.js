@@ -75,7 +75,7 @@ io.on('connection', function(socket){
     log("Received register request from " + name);
     //var color = [getRandomInt(0, 255), getRandomInt(0, 255), getRandomInt(0, 255)];
     var color = [getRandomInt(0, 255), 220, 255];
-    var user = {"name": name, "color": color, "socketId": socket.id, "beat":false};
+    var user = {"name": name, "color": color, "socketId": socket.id, "beat":false, "BPM":0};
 
     log("name: " + user["name"] + "   ==>   color:" + user["color"] + "   ==>   socket:" + user["socketId"]);
 
@@ -98,8 +98,9 @@ io.on('connection', function(socket){
     socket.emit("updateUserList", users);
   });
 
-  socket.on("beat", function (){
-    socket.broadcast.emit("beat", socket.id);
+  //Beat
+  socket.on("beat", function (args){
+    socket.broadcast.emit("beat", {"socketId": socket.id, "time": args["time"], "BPM": args["BPM"]});
   });
 
   //Disconnect

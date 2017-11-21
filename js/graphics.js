@@ -76,6 +76,7 @@ function draw()
     fill(255);
     noStroke();
     text(singewing.users[i]["name"],xPos, yPos);
+    text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
   }
 }
 

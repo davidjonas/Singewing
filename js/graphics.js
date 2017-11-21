@@ -55,7 +55,9 @@ function draw()
         strokeWeight(1);
         ellipse(xPos,yPos,width*0.1+9,width*0.1+9);
       }
-
+      
+      fill(255);
+      noStroke();
       text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
     }
     else {
@@ -74,6 +76,8 @@ function draw()
         ellipse(xPos,yPos,width*0.3+9,width*0.3+9);
       }
 
+      fill(255);
+      noStroke();
       text(singewing.users[i]["BPM"] + " BPM",xPos, yPos+20);
     }
 

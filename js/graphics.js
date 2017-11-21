@@ -55,6 +55,8 @@ function draw()
         strokeWeight(1);
         ellipse(xPos,yPos,width*0.1+9,width*0.1+9);
       }
+
+      text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
     }
     else {
       ellipse(xPos,yPos,width*0.35 + pulse,width*0.35 + pulse);
@@ -71,12 +73,13 @@ function draw()
         strokeWeight(1);
         ellipse(xPos,yPos,width*0.3+9,width*0.3+9);
       }
+
+      text(singewing.users[i]["BPM"] + " BPM",xPos, yPos+20);
     }
 
     fill(255);
     noStroke();
     text(singewing.users[i]["name"],xPos, yPos);
-    text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
   }
 }
 

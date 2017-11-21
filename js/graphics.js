@@ -55,7 +55,7 @@ function draw()
         strokeWeight(1);
         ellipse(xPos,yPos,width*0.1+9,width*0.1+9);
       }
-      
+
       fill(255);
       noStroke();
       text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
@@ -87,7 +87,7 @@ function draw()
   }
 }
 
-function mousePressed()
+function mouseClicked()
 {
   singewing.beat();
   singewing.users[singewing.findUser(singewing.name)]["beat"] = true;

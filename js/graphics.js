@@ -85,6 +85,11 @@ function draw()
     noStroke();
     text(singewing.users[i]["name"],xPos, yPos);
   }
+
+  textAlign(LEFT, TOP);
+  text("Communication delay: " + singewing.delay + "ms",10,10);
+  text("Clock difference corrected: " + singewing.offset + "ms",10,30);
+  textAlign(CENTER, CENTER);
 }
 
 function mouseClicked()

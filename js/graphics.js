@@ -98,6 +98,12 @@ function mouseClicked()
   singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
 }
 
+function touchStarted()
+{
+  singewing.beat();
+  singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+}
+
 function windowResized(){
     resizeCanvas($("#graphics").width(), $("#graphics").height());
     radiuses = [width/4, height/4];

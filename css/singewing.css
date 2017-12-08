@@ -175,7 +175,8 @@ input:-webkit-autofill {
 
 .color_3
 {
-  background-color: #37444e;
+  /*background-color: #37444e;*/
+  background-color: #000000;
   color: #fefefe;
 }
 

@@ -1,4 +1,29 @@
 var radius;
+var animation;
+var animations = [];
+
+var currentPhase = 0;
+var beats = 0;
+
+function iOS() {
+
+  var iDevices = [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ];
+
+  if (!!navigator.platform) {
+    while (iDevices.length) {
+      if (navigator.platform === iDevices.pop()){ return true; }
+    }
+  }
+
+  return false;
+}
 
 window.mobileAndTabletcheck = function() {
   var check = false;
@@ -6,14 +31,91 @@ window.mobileAndTabletcheck = function() {
   return check;
 };
 
+var phases = [
+  //+++++++++++++++++++++++Choose your tempo+++++++++++++++++++++++
+  function (){
+
+    textAlign(CENTER, CENTER);
+    textSize(width*0.03);
+    fill(255, 100);
+    text("Tap / click until you find your tempo.",width/2,height*0.1);
+
+    for(var i=0; i<singewing.users.length; i++)
+    {
+      var angle = map(i, 0, singewing.users.length, 0, TWO_PI);
+      //var yPos = map(singewing.users[i]["BPM"], 0, 200, height-100, 0);
+      var yPos = height/2;
+      var alpha = 7;
+
+      if(singewing.users[i]["name"] === singewing.name)
+      {
+        alpha = 50;
+      }
+
+
+      if(animations[i] === undefined)
+      {
+        animations[i] = 0;
+      }
+      else {
+        animations[i] += singewing.users[i]["BPM"]/1000;
+      }
+
+      if(singewing.users[i]["beat"])
+      {
+        //alpha = 255;
+        if(singewing.users[i]["beat"])
+        {
+          singewing.users[i]["beat"]=false;
+        }
+      }
+
+      fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
+
+      for(var t=0; t<5; t++)
+      {
+        beginShape();
+        noiseDetail(6, 0.4);
+
+        for(var j=0; j<50; j++)
+        {
+          var x = map(j, 0, 50, 0, width);
+          var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * 30 + i;
+          vertex(x, yPos + noise(j+animation*(t+1))*30 + wave);
+        }
+
+        for(var j=100; j>0; j--)
+        {
+          var x = map(j, 0, 100, 0, width);
+          var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * 30 + i;
+          vertex(x, yPos + noise(j+animation*(t+1))*30 + 10 + wave);
+        }
+        endShape();
+      }
+    }
+
+    animation += 0.013;
+  },
+  //+++++++++++++++++++++++Match and lock tempos+++++++++++++++++++++++
+  function (){
+
+  },
+];
+
+function preload() {
+  myFont = loadFont('ScopeOne-Regular.ttf');
+}
+
 function setup()
 {
   cnv = createCanvas($("#graphics").width(), $("#graphics").height());
   cnv.parent('graphics');
   radiuses = [width/4, height/4];
   radius = min(radiuses);
+  animation = 0;
   textAlign(CENTER, CENTER);
   colorMode(HSB, 255);
+  textFont(myFont);
 }
 
 function draw()
@@ -22,97 +124,33 @@ function draw()
   fill("#d35796");
   noStroke();
 
-  for(var i=0; i<singewing.users.length; i++)
-  {
-    var angle = map(i, 0, singewing.users.length, 0, TWO_PI);
-    var xPos = cos(angle) * radius + width/2;
-    var yPos = sin(angle) * radius + height/2;
+  phases[currentPhase]();
 
-    var pulse = sin(frameCount/100 + i) * 10;
-
-    noStroke();
-
-    var alpha = 30;
-
-    if(singewing.users[i]["beat"])
-    {
-      alpha = 255;
-      if(singewing.users[i]["beat"])
-      {
-        singewing.users[i]["beat"]=false;
-      }
-    }
-
-    fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
-
-    if(width > 1000)
-    {
-      ellipse(xPos,yPos,width*0.1 + pulse,width*0.1 + pulse);
-      ellipse(xPos,yPos,width*0.08 + pulse,width*0.08 + pulse);
-      ellipse(xPos,yPos,width*0.06 + pulse,width*0.06 + pulse);
-      ellipse(xPos,yPos,width*0.02 + pulse,width*0.02 + pulse);
-
-      if(singewing.users[i]["name"] == singewing.name)
-      {
-        noFill();
-        stroke(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], 100);
-        strokeWeight(5);
-        ellipse(xPos,yPos,width*0.1,width*0.1);
-        strokeWeight(1);
-        ellipse(xPos,yPos,width*0.1+9,width*0.1+9);
-      }
-
-      fill(255);
-      noStroke();
-      text(singewing.users[i]["BPM"] + " BPM",xPos+110, yPos);
-    }
-    else {
-      ellipse(xPos,yPos,width*0.35 + pulse,width*0.35 + pulse);
-      ellipse(xPos,yPos,width*0.25 + pulse,width*0.25 + pulse);
-      ellipse(xPos,yPos,width*0.10 + pulse,width*0.10 + pulse);
-      ellipse(xPos,yPos,width*0.05 + pulse,width*0.05 + pulse);
-
-      if(singewing.users[i]["name"] == singewing.name)
-      {
-        noFill();
-        stroke(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], 100);
-        strokeWeight(5);
-        ellipse(xPos,yPos,width*0.3,width*0.3);
-        strokeWeight(1);
-        ellipse(xPos,yPos,width*0.3+9,width*0.3+9);
-      }
-
-      fill(255);
-      noStroke();
-      text(singewing.users[i]["BPM"] + " BPM",xPos, yPos+20);
-    }
-
-    fill(255);
-    noStroke();
-    text(singewing.users[i]["name"],xPos, yPos);
-  }
-
+  //Debug
   textAlign(LEFT, TOP);
+  textSize(10);
+  fill(255);
   text("Communication delay: " + singewing.delay + "ms",10,10);
   text("Clock difference corrected: " + singewing.offset + "ms",10,30);
-  textAlign(CENTER, CENTER);
+  text(beats + " beats detected.", 10, 50);
+  text(singewing.BPM + " BPM", 10, 70);
+
 }
 
 function mouseClicked()
 {
-  if(!window.mobileAndTabletcheck())
-  {
     singewing.beat();
     singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
-  }
+    beats++;
 }
 
 function touchStarted()
 {
-  if(window.mobileAndTabletcheck())
+  if(iOS())
   {
     singewing.beat();
     singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+    beats++;
   }
 }
 

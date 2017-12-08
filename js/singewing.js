@@ -126,14 +126,15 @@ Singewing.prototype.beat = function()
     this.beats.shift();
   }
 
-  if(this.beats.length>1)
+  if(this.beats.length>2)
   {
+    this.BPM = 0;
     for(var i=1; i<this.beats.length; i++)
     {
       this.BPM += (this.beats[i] - this.beats[i-1]);
     }
 
-    this.BPM = this.BPM/(this.smoothing-1);
+    this.BPM = this.BPM/this.beats.length-1;
 
     this.BPM = Math.round((1000/this.BPM)*60);
 

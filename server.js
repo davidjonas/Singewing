@@ -101,6 +101,11 @@ io.on('connection', function(socket){
   //Beat
   socket.on("beat", function (args){
     socket.broadcast.emit("beat", {"socketId": socket.id, "time": args["time"], "BPM": args["BPM"]});
+    var index = findUser(socket.id);
+    if(index != null)
+    {
+      users[index]["BPM"] = args["BPM"];
+    }
   });
 
   //Disconnect

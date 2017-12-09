@@ -112,34 +112,58 @@ Singewing.prototype.updateUserList = function () {
 //TX - beat
 Singewing.prototype.beat = function()
 {
-  var correctedTime = new Date().getTime() + this.offset;
-  this.socket.emit("beat", {"time":correctedTime, "BPM": this.BPM});
+  if(this.registered)
+  {
+    var correctedTime = new Date().getTime() + this.offset;
+    this.socket.emit("beat", {"time":correctedTime, "BPM": this.BPM});
 
-  //clear if current beat interval bigger than 2 seconds;
-  if(this.beats.length > 0 && (correctedTime - this.beats[this.beats.length-1]) > 2000)
-  {
-    this.beats = [];
-  }
-  this.beats.push(correctedTime);
-  if(this.beats.length == this.smoothing)
-  {
-    this.beats.shift();
-  }
-
-  if(this.beats.length>2)
-  {
-    this.BPM = 0;
-    for(var i=1; i<this.beats.length; i++)
+    //clear if current beat interval bigger than 2 seconds;
+    if(this.beats.length > 0 && (correctedTime - this.beats[this.beats.length-1]) > 2000)
     {
-      this.BPM += (this.beats[i] - this.beats[i-1]);
+      this.beats = [];
+    }
+    this.beats.push(correctedTime);
+    if(this.beats.length == this.smoothing)
+    {
+      this.beats.shift();
     }
 
-    this.BPM = this.BPM/this.beats.length-1;
+    if(this.beats.length>2)
+    {
+      this.BPM = 0;
+      for(var i=1; i<this.beats.length; i++)
+      {
+        this.BPM += (this.beats[i] - this.beats[i-1]);
+      }
 
-    this.BPM = Math.round((1000/this.BPM)*60);
+      this.BPM = this.BPM/this.beats.length-1;
 
-    this.users[this.findUser(this.name)]["BPM"] = this.BPM;
+      this.BPM = Math.round((1000/this.BPM)*60);
+
+      this.users[this.findUser(this.name)]["BPM"] = this.BPM;
+    }
   }
+}
+
+Singewing.prototype.findMatches = function (index) {
+  var result = [];
+
+  if(this.users[index]["BPM"] === 0)
+  {
+    return result;
+  }
+
+  for (var i=0; i<this.users.length; i++)
+  {
+    if(i != index)
+    {
+      if(this.users[i]["BPM"] === this.users[index]["BPM"])
+      {
+        result.push(i);
+      }
+    }
+  }
+  return result;
 }
 
 Singewing.prototype.findUser = function (socketId) {

@@ -39,19 +39,16 @@ var phases = [
     textSize(width*0.03);
     fill(255, 100);
     text("Tap / click until you find your tempo.",width/2,height*0.1);
+    textSize(width*0.1);
+    text(singewing.BPM,width/2,height*0.2);
 
     for(var i=0; i<singewing.users.length; i++)
     {
-      var angle = map(i, 0, singewing.users.length, 0, TWO_PI);
-      //var yPos = map(singewing.users[i]["BPM"], 0, 200, height-100, 0);
-      var yPos = height/2;
       var alpha = 7;
-
       if(singewing.users[i]["name"] === singewing.name)
       {
         alpha = 50;
       }
-
 
       if(animations[i] === undefined)
       {
@@ -61,37 +58,32 @@ var phases = [
         animations[i] += singewing.users[i]["BPM"]/1000;
       }
 
+      if(singewing.findMatches(i).length != 0)
+      {
+        alpha = 50;
+        drawWave(i, alpha, true);
+        var numUsers = singewing.users.length;
+        var posY = height*0.9;
+        var posX = (i*width*0.8/numUsers) + width*0.2;
+        strokeWeight(3);
+        stroke(255);
+        ellipse(posX, posY, 30, 30);
+        noStroke();
+        strokeWeight(1);
+      }
+      else {
+        drawWave(i, alpha, false);
+      }
+
       if(singewing.users[i]["beat"])
       {
-        //alpha = 255;
         if(singewing.users[i]["beat"])
         {
           singewing.users[i]["beat"]=false;
         }
       }
 
-      fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
-
-      for(var t=0; t<5; t++)
-      {
-        beginShape();
-        noiseDetail(6, 0.4);
-
-        for(var j=0; j<50; j++)
-        {
-          var x = map(j, 0, 50, 0, width);
-          var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * 30 + i;
-          vertex(x, yPos + noise(j+animation*(t+1))*30 + wave);
-        }
-
-        for(var j=100; j>0; j--)
-        {
-          var x = map(j, 0, 100, 0, width);
-          var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * 30 + i;
-          vertex(x, yPos + noise(j+animation*(t+1))*30 + 10 + wave);
-        }
-        endShape();
-      }
+      drawUserLegend(i, alpha);
     }
 
     animation += 0.013;
@@ -101,6 +93,65 @@ var phases = [
 
   },
 ];
+
+function drawUserLegend(i, alpha)
+{
+  var numUsers = singewing.users.length;
+  var posY = height*0.9;
+  var posX = (i*width*0.8/numUsers) + width*0.2;
+
+  fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha+30);
+
+  push();
+    translate(posX, posY);
+    rotate(radians(-90));
+    for(var j=0; j<3; j++)
+    {
+      beginShape();
+      for(var p=0; p<TWO_PI; p+=TWO_PI/8)
+      {
+        vertex(cos(p)*10 + (noise(p+animation*(j+1))-0.5)*20, sin(p)*10 + (noise(p+animation*(j+1))-0.5)*20);
+      }
+      endShape();
+    }
+    textAlign(LEFT, CENTER);
+    textSize(height*0.03);
+    text(singewing.users[i]["name"],25, -3);
+  pop();
+}
+
+function drawWave(i, alpha, matched)
+{
+  var yPos = height/2;
+  var noiseAmplitude = 30;
+
+  if(matched) {
+    noiseAmplitude = 60;
+  }
+
+  fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha);
+
+  for(var t=0; t<5; t++)
+  {
+    beginShape();
+    noiseDetail(6, 0.4);
+
+    for(var j=0; j<50; j++)
+    {
+      var x = map(j, 0, 50, 0, width);
+      var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * noiseAmplitude + i;
+      vertex(x, yPos + noise(j+animation*(t+1))*noiseAmplitude + wave);
+    }
+
+    for(var j=100; j>0; j--)
+    {
+      var x = map(j, 0, 100, 0, width);
+      var wave = cos(map(x, 0, width, 0, TWO_PI)+animations[i]) * noiseAmplitude + i;
+      vertex(x, yPos + noise(j+animation*(t+1))*noiseAmplitude + 10 + wave);
+    }
+    endShape();
+  }
+}
 
 function preload() {
   myFont = loadFont('ScopeOne-Regular.ttf');
@@ -139,14 +190,17 @@ function draw()
 
 function mouseClicked()
 {
-    singewing.beat();
-    singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
-    beats++;
+    if(singewing.registered)
+    {
+      singewing.beat();
+      singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+      beats++;
+    }
 }
 
 function touchStarted()
 {
-  if(iOS())
+  if(iOS() && singewing.registered)
   {
     singewing.beat();
     singewing.users[singewing.findUser(singewing.name)]["beat"] = true;

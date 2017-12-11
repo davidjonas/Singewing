@@ -157,7 +157,7 @@ Singewing.prototype.findMatches = function (index) {
   {
     if(i != index)
     {
-      if(this.users[i]["BPM"] === this.users[index]["BPM"])
+      if(abs(this.users[i]["BPM"] - this.users[index]["BPM"]) < 3)
       {
         result.push(i);
       }

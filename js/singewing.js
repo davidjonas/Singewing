@@ -26,6 +26,7 @@ var Singewing = function () {
   this.beats = [];
   this.BPM = 0;
   this.smoothing = 20;
+  this.matches = [];
 
   // RX - connection
   this.socket.on('connection', function(){
@@ -83,6 +84,24 @@ var Singewing = function () {
     var index = self.findUser(args["socketId"]);
     self.users[index]["beat"] = true;
     self.users[index]["BPM"] = args["BPM"];
+  });
+
+  //RX - match
+  this.socket.on("match", function(args)
+  {
+    self.matches = args;
+    console.log("matches");
+    console.log(self.matches);
+  });
+
+  //RX - phase
+  this.socket.on("phase", function(args)
+  {
+    currentPhase = args["number"];
+    if(currentPhase == 1)
+    {
+      BPMAvg = args["data"]["BPM"];
+    }
   });
 };
 
@@ -145,25 +164,29 @@ Singewing.prototype.beat = function()
   }
 }
 
-Singewing.prototype.findMatches = function (index) {
-  var result = [];
+Singewing.prototype.findMatches = function () {
+  return this.matches;
+}
 
-  if(this.users[index]["BPM"] === 0)
+Singewing.prototype.averageBPM = function ()
+{
+  var avg = 0;
+  var count = 0;
+  for(var i=0; i<this.users.length; i++)
   {
-    return result;
-  }
-
-  for (var i=0; i<this.users.length; i++)
-  {
-    if(i != index)
+    if(this.users[i]["BPM"]>0)
     {
-      if(abs(this.users[i]["BPM"] - this.users[index]["BPM"]) < 3)
-      {
-        result.push(i);
-      }
+      avg += this.users[i]["BPM"];
+      count++;
     }
   }
-  return result;
+
+  if(count > 0)
+  {
+    avg /= count;
+  }
+
+  return int(avg);
 }
 
 Singewing.prototype.findUser = function (socketId) {

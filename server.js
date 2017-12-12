@@ -106,6 +106,39 @@ io.on('connection', function(socket){
     {
       users[index]["BPM"] = args["BPM"];
     }
+
+    var result = [];
+
+    for(var u=0; u<users.length; u++)
+    {
+      for(var o=0; o<users.length; o++)
+      {
+        if(Math.abs(users[u]["BPM"] - users[o]["BPM"]) < 5 &&
+          users[u]["BPM"] != 0 &&
+          users[o]["BPM"] != 0 &&
+          o != u)
+        {
+          if(result.indexOf(o) == -1 && result.indexOf(u) == -1)
+          {
+            result.push(u);
+            result.push(o);
+          }
+        }
+      }
+    }
+
+    io.emit("match", result);
+    if(result.length == users.length)
+    {
+      var bpm = 0;
+      for(var u=0; u<users.length; u++)
+      {
+        bpm += users[u]["BPM"];
+      }
+      bpm = bpm / users.length;
+
+      io.emit("phase", {"number":1, "data":{"BPM": Math.floor(bpm)}});
+    }
   });
 
   //Disconnect

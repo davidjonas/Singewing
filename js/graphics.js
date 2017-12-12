@@ -4,6 +4,7 @@ var animations = [];
 
 var currentPhase = 0;
 var beats = 0;
+var BPMAvg = 0;
 
 function iOS() {
 
@@ -32,7 +33,7 @@ window.mobileAndTabletcheck = function() {
 };
 
 var phases = [
-  //+++++++++++++++++++++++Choose your tempo+++++++++++++++++++++++
+  //+++++++++++++++++++++++ Phase 0 -- Choose your tempo+++++++++++++++++++++++
   function (){
 
     textAlign(CENTER, CENTER);
@@ -41,6 +42,15 @@ var phases = [
     text("Tap / click until you find your tempo.",width/2,height*0.1);
     textSize(width*0.1);
     text(singewing.BPM,width/2,height*0.2);
+
+    textSize(width*0.02);
+    if(singewing.BPM < singewing.averageBPM())
+    {
+      text('faster',width/2,height*0.35);
+    }
+    if(singewing.BPM > singewing.averageBPM()) {
+      text('slower',width/2,height*0.35);
+    }
 
     for(var i=0; i<singewing.users.length; i++)
     {
@@ -58,18 +68,33 @@ var phases = [
         animations[i] += singewing.users[i]["BPM"]/1000;
       }
 
-      if(singewing.findMatches(i).length != 0)
+      var matches = singewing.findMatches();
+
+      if(matches.length != 0)
       {
-        alpha = 50;
-        drawWave(i, alpha, true);
-        var numUsers = singewing.users.length;
-        var posY = height*0.9;
-        var posX = (i*width*0.8/numUsers) + width*0.2;
-        strokeWeight(3);
-        stroke(255);
-        ellipse(posX, posY, 30, 30);
-        noStroke();
-        strokeWeight(1);
+        var found = false;
+        for(var m=0; m<matches.length; m++)
+        {
+          if(matches[m] == i){
+            found = true;
+          }
+        }
+        if(found)
+        {
+          alpha = 50;
+          drawWave(i, alpha, true);
+          var numUsers = singewing.users.length;
+          var posY = height*0.9;
+          var posX = (i*width*0.8/numUsers) + width*0.2;
+          strokeWeight(3);
+          stroke(255);
+          ellipse(posX, posY, 30, 30);
+          noStroke();
+          strokeWeight(1);
+        }
+        else {
+          drawWave(i, alpha, false);
+        }
       }
       else {
         drawWave(i, alpha, false);
@@ -88,9 +113,15 @@ var phases = [
 
     animation += 0.013;
   },
-  //+++++++++++++++++++++++Match and lock tempos+++++++++++++++++++++++
+  //+++++++++++++++++++++++ Phase 1 --  Match and lock tempos+++++++++++++++++++++++
   function (){
-
+    textAlign(CENTER, CENTER);
+    textSize(width*0.03);
+    fill(255, 100);
+    text("Found the group tempo",width/2,height*0.1);
+    fill(255);
+    textSize(width*0.1);
+    text(BPMAvg,width/2,height*0.2);
   },
 ];
 
@@ -178,13 +209,13 @@ function draw()
   phases[currentPhase]();
 
   //Debug
-  textAlign(LEFT, TOP);
-  textSize(10);
-  fill(255);
-  text("Communication delay: " + singewing.delay + "ms",10,10);
-  text("Clock difference corrected: " + singewing.offset + "ms",10,30);
-  text(beats + " beats detected.", 10, 50);
-  text(singewing.BPM + " BPM", 10, 70);
+  // textAlign(LEFT, TOP);
+  // textSize(10);
+  // fill(255);
+  // text("Communication delay: " + singewing.delay + "ms",10,10);
+  // text("Clock difference corrected: " + singewing.offset + "ms",10,30);
+  // text(beats + " beats detected.", 10, 50);
+  // text(singewing.BPM + " BPM", 10, 70);
 
 }
 

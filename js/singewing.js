@@ -90,8 +90,6 @@ var Singewing = function () {
   this.socket.on("match", function(args)
   {
     self.matches = args;
-    console.log("matches");
-    console.log(self.matches);
   });
 
   //RX - phase

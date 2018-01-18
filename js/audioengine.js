@@ -13,7 +13,7 @@ var AudioEngine = function ()
   this.sounds = [
       new AudioFile("snare01.wav"),
       new AudioFile("kick01.wav"),
-      new AudioFile("cowbell01.wav"),
+      new AudioFile("Cowbell01.wav"),
       new AudioFile("ping01.wav"),
       new AudioFile("sax01.wav"),
   ];

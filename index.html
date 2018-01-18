@@ -33,13 +33,17 @@
   <script src="jquery.min.js"></script>
   <script src="p5.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="beet.min.js"></script>
   <script src="singewing.js"></script>
   <script src="ui.js"></script>
   <script src="graphics.js"></script>
+  <script src="audioengine.js"></script>
 </head>
 <body>
   <section id="intro" class="color_1">
-    <div>
+    <div id="introWrapper">
+      <div id="soundSelector"></div>
+      <div id="colorSelector"></div>
       <h1>Singewing space</h1>
       <form id="introForm">
         <input type="text" id="name" placeholder="What is your name?" autocomplete="off"/>

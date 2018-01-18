@@ -27,6 +27,8 @@ var Singewing = function () {
   this.BPM = 0;
   this.smoothing = 20;
   this.matches = [];
+  this.selectedSound = 0;
+  this.selectedColor = 0;
 
   // RX - connection
   this.socket.on('connection', function(){
@@ -64,7 +66,11 @@ var Singewing = function () {
 
   //RX - User disconnected
   this.socket.on("userQuit", function (user){
-    log(user["name"] + " Left.");
+    if(self.registered)
+    {
+      log(user["name"] + " Left.");
+      audio.stopClick(self.findUser(user["name"]));
+    }
   });
 
   //RX - registration error
@@ -75,15 +81,49 @@ var Singewing = function () {
 
   //RX - Update user list Receive
   this.socket.on("updateUserList", function (users) {
-    self.users = users;
+    if(self.registered)
+    {
+      self.users = users;
+
+      for(var i=0; i<self.users.length; i++)
+      {
+        if(self.users[i]["name"] != self.name && self.users[i]["BPM"] > 0)
+        {
+          if(audio.layers[i])
+          {
+            audio.setTempo(i, self.users[i]["BPM"]);
+          }
+          else {
+            //audio.startClick(i, 100, self.users[i]["BPM"]);
+            audio.startSound(i, self.users[i]["sound"], self.users[i]["BPM"]);
+          }
+        }
+      }
+    }
   });
 
   //RX - Beat
   this.socket.on("beat", function(args)
   {
-    var index = self.findUser(args["socketId"]);
-    self.users[index]["beat"] = true;
-    self.users[index]["BPM"] = args["BPM"];
+    if(self.registered)
+    {
+      var index = self.findUser(args["socketId"]);
+      self.users[index]["beat"] = true;
+      self.users[index]["BPM"] = args["BPM"];
+      if(audio.layers[index])
+      {
+        //console.log("Setting tempo to " + args["BPM"]);
+        audio.setTempo(index, args["BPM"]);
+      }
+      else {
+        if(args["BPM"] > 0)
+        {
+          //audio.startClick(index, 100, args["BPM"]);
+          //audio.startSound(index, 1, args["BPM"]);
+          audio.startSound(index, self.users[index]["sound"], args["BPM"], self.users[index]["pattern"]);
+        }
+      }
+    }
   });
 
   //RX - match
@@ -118,7 +158,7 @@ Singewing.prototype.test = function() {
 //TX - register
 Singewing.prototype.register = function () {
   this.name = $("#name").val();
-  this.socket.emit("register", this.name);
+  this.socket.emit("register", {"name":this.name, "sound":this.selectedSound, "color":this.selectedColor});
 };
 
 //TX - Get/Update user list
@@ -132,7 +172,7 @@ Singewing.prototype.beat = function()
   if(this.registered)
   {
     var correctedTime = new Date().getTime() + this.offset;
-    this.socket.emit("beat", {"time":correctedTime, "BPM": this.BPM});
+    audio.sounds[this.selectedSound].play();
 
     //clear if current beat interval bigger than 2 seconds;
     if(this.beats.length > 0 && (correctedTime - this.beats[this.beats.length-1]) > 2000)
@@ -159,7 +199,22 @@ Singewing.prototype.beat = function()
 
       this.users[this.findUser(this.name)]["BPM"] = this.BPM;
     }
+
+    this.socket.emit("beat", {"time":correctedTime, "BPM": this.BPM});
   }
+}
+
+Singewing.prototype.setPattern = function (pattern)
+{
+  var index = this.findUser(this.name);
+  this.users[index]["pattern"] = pattern;
+  if(audio.layers[index]) {
+    audio.updateLayerPattern(index, pattern);
+  }
+  else {
+    audio.startSound(index, this.selectedSound, this.users[index]["BPM"], pattern);
+  }
+  this.socket.emit("setPattern", pattern);
 }
 
 Singewing.prototype.findMatches = function () {

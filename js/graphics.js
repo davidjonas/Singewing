@@ -1,6 +1,7 @@
 var radius;
 var animation;
 var animations = [];
+var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 var currentPhase = 0;
 var beats = 0;
@@ -198,6 +199,56 @@ function setup()
   textAlign(CENTER, CENTER);
   colorMode(HSB, 255);
   textFont(myFont);
+
+  for(var i=0; i < audio.sounds.length; i++)
+  {
+    //var angle = i*(TWO_PI/audio.sounds.length);
+    //var left = (cos(angle)/2 + 0.5)*100;
+    //var top = (sin(angle)/2 + 0.5)*100;
+
+    var left = 100/audio.sounds.length * (i+0.5);
+    var c = int(255/audio.sounds.length * i);
+    var top = (sin(map(i, 0, audio.sounds.length-1, 0, -PI)) * 30);
+
+    var el = $('<div class="soundButton" data-index="'+i+'">'+letters[i]+'</div>');
+    var el2 = $('<div class="colorButton" data-index="'+c+'"></div>');
+
+    $(el).click(soundChoice);
+    $(el).css({"position": "absolute", "left": left + "%", "top":top + "px"});
+
+    $(el2).click(colorChoice);
+    $(el2).css({"position": "absolute", "left": left + "%", "top":top + "px", "background": "hsl("+(c*360/255)+",60%,50%)"});
+
+    if(i == singewing.selectedSound)
+    {
+      $(el).addClass("selected");
+    }
+    if(c == singewing.selectedColor)
+    {
+      $(el2).addClass("selected");
+    }
+
+    $("#soundSelector").append(el);
+    $("#colorSelector").append(el2);
+
+  }
+}
+
+function soundChoice()
+{
+  var index = this.dataset.index;
+  audio.sounds[index].play();
+  singewing.selectedSound = index;
+  $(".soundButton.selected").removeClass("selected");
+  $(this).addClass("selected");
+}
+
+function colorChoice()
+{
+  var color = this.dataset.index;
+  singewing.selectedColor = color;
+  $(".colorButton.selected").removeClass("selected");
+  $(this).addClass("selected");
 }
 
 function draw()

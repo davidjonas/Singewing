@@ -46,6 +46,7 @@ var findUser = function (socketId) {
 app.use(express.static('js'));
 app.use(express.static('css'));
 app.use(express.static('images'));
+app.use(express.static('sounds'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -71,11 +72,14 @@ io.on('connection', function(socket){
   });
 
   //register
-  socket.on('register', function (name) {
+  socket.on('register', function (args) {
+    var name = args["name"];
     log("Received register request from " + name);
     //var color = [getRandomInt(0, 255), getRandomInt(0, 255), getRandomInt(0, 255)];
-    var color = [getRandomInt(0, 255), 220, 255];
-    var user = {"name": name, "color": color, "socketId": socket.id, "beat":false, "BPM":0};
+    //var color = [getRandomInt(0, 255), 220, 255];
+    var color = [parseInt(args["color"]), 220, 225];
+    var sound = args["sound"];
+    var user = {"name": name, "color": color, "sound":sound, "socketId": socket.id, "beat":false, "BPM":0, "pattern":"1111"};
 
     log("name: " + user["name"] + "   ==>   color:" + user["color"] + "   ==>   socket:" + user["socketId"]);
 

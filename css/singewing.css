@@ -234,3 +234,14 @@ input:-webkit-autofill {
   background-color: #d35796;
   color: #fefefe;
 }
+
+/* ============== Leap Motion ============ */
+
+.hand
+{
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: red;
+  border-radius: 15px;
+}

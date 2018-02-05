@@ -68,9 +68,12 @@ AudioEngine.prototype.startClick = function (id, frequency, bpm, patt)
 
 AudioEngine.prototype.stopClick = function (id)
 {
-  this.layers[id].stop();
-  this.beet.remove(this.layers[id]);
-  this.layers[id] = null;
+  if(this.layers[id])
+  {
+    this.layers[id].stop();
+    this.beet.remove(this.layers[id]);
+    this.layers[id] = null;
+  }
 };
 
 AudioEngine.prototype.stopSound = AudioEngine.prototype.stopClick;
@@ -174,7 +177,7 @@ AudioFile.prototype.play = function (time)
   var source = audio.context.createBufferSource()
   var g = audio.context.createGain();
   source.buffer = this.buffer;
-  if(time && time > 0)
+  if(time && time - audio.context.currentTime > 0)
   {
     source.start(time - audio.context.currentTime);
   }

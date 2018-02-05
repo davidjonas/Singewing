@@ -52,5 +52,4 @@ Leap.loop(function(frame){
       leapControl.hands[i] = null;
     }
   }
-
 });

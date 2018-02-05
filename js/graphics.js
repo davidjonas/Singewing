@@ -3,7 +3,7 @@ var animation;
 var animations = [];
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-var currentPhase = 0;
+
 var beats = 0;
 var BPMAvg = 0;
 
@@ -123,8 +123,51 @@ var phases = [
     fill(255);
     textSize(width*0.1);
     text(BPMAvg,width/2,height*0.2);
+
+    var radius = 80;
+
+    for(var i=0; i<singewing.users.length; i++)
+    {
+      var alpha = 7;
+      if(singewing.users[i]["name"] === singewing.name)
+      {
+        alpha = 50;
+      }
+
+      drawPattern(singewing.users[i]["pattern"], width/2, height/2, radius, singewing.users[i]["color"][0], singewing.users[i]["color"][1], singewing.users[i]["color"][2]);
+      radius += 20;
+      drawUserLegend(i, alpha);
+    }
+
+
   },
 ];
+
+function drawPattern(pattern, x, y, radius, hue, sat, bright) {
+  var size = pattern.length;
+  var offset = HALF_PI;
+  var step = TWO_PI / size;
+
+  noFill();
+  stroke(100,100,100);
+  ellipse(x, y, radius*2, radius*2);
+
+  var stepCount = 0;
+
+  for(var angle=offset; angle<offset+TWO_PI; angle=angle+step)
+  {
+    if(pattern[stepCount] == '1')
+    {
+      fill(hue,sat,bright);
+    }
+    else {
+      fill(0);
+    }
+    ellipse(x+cos(angle)*radius, y+sin(angle)*radius, 10, 10);
+
+    stepCount++;
+  }
+}
 
 function drawUserLegend(i, alpha)
 {
@@ -257,7 +300,7 @@ function draw()
   fill("#d35796");
   noStroke();
 
-  phases[currentPhase]();
+  phases[singewing.currentPhase]();
 
   //Debug
   // textAlign(LEFT, TOP);
@@ -274,9 +317,12 @@ function mouseClicked()
 {
     if(singewing.registered)
     {
-      singewing.beat();
-      singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
-      beats++;
+      if(singewing.currentPhase == 0)
+      {
+        singewing.beat();
+        singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+        beats++;
+      }
     }
 }
 
@@ -284,9 +330,12 @@ function touchStarted()
 {
   if(iOS() && singewing.registered)
   {
-    singewing.beat();
-    singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
-    beats++;
+    if(singewing.currentPhase == 0)
+    {
+      singewing.beat();
+      singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+      beats++;
+    }
   }
 }
 

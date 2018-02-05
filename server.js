@@ -102,6 +102,13 @@ io.on('connection', function(socket){
     socket.emit("updateUserList", users);
   });
 
+  //setPattern
+  socket.on("setPattern", function(args){
+    var index = findUser(socket.id);
+    users[index]["pattern"] = args;
+    socket.broadcast.emit("setPattern", {"socketId": socket.id, "pattern": args});
+  });
+
   //Beat
   socket.on("beat", function (args){
     socket.broadcast.emit("beat", {"socketId": socket.id, "time": args["time"], "BPM": args["BPM"]});
@@ -122,10 +129,13 @@ io.on('connection', function(socket){
           users[o]["BPM"] != 0 &&
           o != u)
         {
-          if(result.indexOf(o) == -1 && result.indexOf(u) == -1)
+          if(result.indexOf(o) == -1)
+          {
+            result.push(o);
+          }
+          if(result.indexOf(u) == -1)
           {
             result.push(u);
-            result.push(o);
           }
         }
       }

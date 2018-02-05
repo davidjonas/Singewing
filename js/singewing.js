@@ -29,6 +29,7 @@ var Singewing = function () {
   this.matches = [];
   this.selectedSound = 0;
   this.selectedColor = 0;
+  this.currentPhase = 0;
 
   // RX - connection
   this.socket.on('connection', function(){
@@ -61,6 +62,7 @@ var Singewing = function () {
     {
       self.registered = true;
       registrationSuccess();
+      self.updateUserList();
     }
   });
 
@@ -135,11 +137,19 @@ var Singewing = function () {
   //RX - phase
   this.socket.on("phase", function(args)
   {
-    currentPhase = args["number"];
-    if(currentPhase == 1)
+    self.clearLayers();
+    self.currentPhase = args["number"];
+    if(self.currentPhase == 1)
     {
       BPMAvg = args["data"]["BPM"];
+      self.BPM = args["data"]["BPM"];
     }
+  });
+
+  //RX - setPattern
+  this.socket.on("setPattern", function (args){
+    var index = self.findUser(args["socketId"]);
+    self.users[index]["pattern"] = args["pattern"];
   });
 };
 
@@ -204,6 +214,7 @@ Singewing.prototype.beat = function()
   }
 }
 
+//TX - setPattern
 Singewing.prototype.setPattern = function (pattern)
 {
   var index = this.findUser(this.name);
@@ -219,6 +230,13 @@ Singewing.prototype.setPattern = function (pattern)
 
 Singewing.prototype.findMatches = function () {
   return this.matches;
+}
+
+Singewing.prototype.clearLayers = function () {
+  for (var i=0; i<audio.layers.length; i++)
+  {
+    audio.stopSound(i);
+  }
 }
 
 Singewing.prototype.averageBPM = function ()

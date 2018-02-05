@@ -145,7 +145,7 @@ var phases = [
 
 function drawPattern(pattern, x, y, radius, hue, sat, bright) {
   var size = pattern.length;
-  var offset = HALF_PI;
+  var offset = -HALF_PI;
   var step = TWO_PI / size;
 
   noFill();
@@ -175,6 +175,7 @@ function drawUserLegend(i, alpha)
   var posY = height*0.9;
   var posX = (i*width*0.8/numUsers) + width*0.2;
 
+  noStroke();
   fill(singewing.users[i]["color"][0],singewing.users[i]["color"][1],singewing.users[i]["color"][2], alpha+30);
 
   push();

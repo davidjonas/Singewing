@@ -38,6 +38,12 @@ AudioEngine.prototype.startSound = function (id, soundIndex, bpm, patt)
   else {
     pattern = this.beet.pattern(4);
   }
+
+  if(this.layers[id])
+  {
+    this.stopSound(id);
+  }
+
   this.layers[id] = this.beet.layer(pattern, function (audiotime, step, timeFromScheduled){
           self.sounds[soundIndex].play(audiotime);
     });

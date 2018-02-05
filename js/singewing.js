@@ -81,7 +81,7 @@ var Singewing = function () {
     registrationError();
   });
 
-  //RX - Update user list Receive
+  //RX - updateUserList
   this.socket.on("updateUserList", function (users) {
     if(self.registered)
     {
@@ -143,6 +143,13 @@ var Singewing = function () {
     {
       BPMAvg = args["data"]["BPM"];
       self.BPM = args["data"]["BPM"];
+      audio.beet.tempo = self.BPM;
+      var el = $('<div id="pattern"><input type="text" id="patternInput" value="'+self.users[self.findUser(self.name)]["pattern"]+'"/> <input id="patternApplyButton" type="button" value="apply" /></div>');
+      $(el).css("margin-top", (100 + 20 * self.users.length) + "px" );
+      $("#graphics").append(el);
+      $("#patternApplyButton").click(function (){
+                self.setPattern($("#patternInput").val());
+      });
     }
   });
 
@@ -150,6 +157,7 @@ var Singewing = function () {
   this.socket.on("setPattern", function (args){
     var index = self.findUser(args["socketId"]);
     self.users[index]["pattern"] = args["pattern"];
+    audio.startSound(index, self.users[index]["sound"], self.users[index]["BPM"], self.users[index]["pattern"]);
   });
 };
 

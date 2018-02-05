@@ -245,3 +245,29 @@ input:-webkit-autofill {
   background-color: red;
   border-radius: 15px;
 }
+
+#pattern {
+  position: absolute;
+  top: 50vh;
+  width: 100vw;
+}
+
+#patternInput {
+  font-size: 17px;
+  text-decoration: underline;
+}
+
+#patternApplyButton
+{
+  border: 2px solid white;
+  font-size: 17px;
+  display: block;
+  width: 100px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+#patternApplyButton:active
+{
+  background-color: #ccc;
+}

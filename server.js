@@ -151,6 +151,13 @@ io.on('connection', function(socket){
       }
       bpm = bpm / users.length;
 
+      for(var u=0; u<users.length; u++)
+      {
+        users[u]["BPM"] = bpm;
+        users[u]["pattern"] = "0000";
+      }
+
+      io.emit("updateUserList", users);
       io.emit("phase", {"number":1, "data":{"BPM": Math.floor(bpm)}});
     }
   });

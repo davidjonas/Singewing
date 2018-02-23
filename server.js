@@ -52,6 +52,10 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/leap', function(req, res){
+  res.sendFile(__dirname + '/leap.html');
+});
+
 //Socket Service
 io.on('connection', function(socket){
   log("User connected");

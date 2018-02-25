@@ -2,18 +2,18 @@
 
 var LeapControl = function ()
 {
-  this.numHands = 0;
+  this.numActiveHands = 0;
   this.connected = false;
+  this.handsElements = [];
   this.hands = [];
   this.smoothing = 5;
+  this.peakDetectionSamples = 100;
   this.frames = [];
-  this.current_velocity = [];
   this.current_acceleration = [];
   this.velocityPeakHandlers = [];
   this.accelerationPeakHandlers = [];
   this.connectHandlers = [];
-  this.threshold = 0;
-  this.last_acceleration_magnitude = [];
+  this.threshold = 1.5;
 };
 
 LeapControl.prototype.onVelocityPeak = function (callback)
@@ -41,7 +41,8 @@ LeapControl.prototype.connectedEvent = function ()
 
 LeapControl.prototype.accelerationPeakEvent = function (value)
 {
-  console.log("peak");
+  //console.log("peak");
+  audio.click(audio.context.currentTime,4000);
   for(var i=0; i<this.accelerationPeakHandlers.length; i++)
   {
     accelerationPeakHandlers[i](value);
@@ -56,78 +57,170 @@ LeapControl.prototype.velocityPeakEvent = function ()
   }
 };
 
-LeapControl.prototype.updateHand = function (id, hand)
+LeapControl.prototype.updateHandElements = function (id, hand)
 {
-  if(!this.hands[id])
+  if(!this.handsElements[id])
   {
-    this.hands[id] = $('<div class="hand"></div>');
-    $("body").append(this.hands[id]);
+    this.handsElements[id] = $('<div class="hand"></div>');
+    $("body").append(this.handsElements[id]);
   }
 
   var x = map(hand.palmPosition[0], -300, 300, 0, width);
   var y = map(hand.palmPosition[1], 50, 350, height, 0);
 
-  $(this.hands[id]).css({
+  $(this.handsElements[id]).css({
       'left': x,
       'top': y,
       });
 };
 
-LeapControl.prototype.calculateValues = function () {
-  for(var h=0; h<this.hands.length; h++)
+LeapControl.prototype.getSpeed = function (id)
+{
+  if(this.hands[id] && this.hands[id].speedBuffer.length > 0)
   {
-    if(!this.current_velocity[h])
+    return this.hands[id].speedBuffer[this.hands[id].speedBuffer.length - 1];
+  }
+  else {
+    return 0;
+  }
+}
+
+LeapControl.prototype.getAcceleration = function (id)
+{
+  if(this.hands[id] && this.hands[id].accBuffer.length > 0)
+  {
+    return this.hands[id].accBuffer[this.hands[id].accBuffer.length - 1];
+  }
+  else {
+    return 0;
+  }
+}
+
+LeapControl.prototype.updateHand = function (frame, h) {
+  var id = frame.hands[h].id;
+
+  if(!this.hands[id])
+  {
+    this.hands[id] = frame.hands[h];
+    this.hands[id].speedBuffer = [];
+    this.hands[id].accBuffer = [];
+    this.hands[id].accPeaking = false;
+    this.hands[id].speedPeaking = false;
+  }
+
+  //Calculate the speed as the magnitude of the velocity.
+  var speed = Math.sqrt(this.hands[id].palmVelocity[0] * this.hands[id].palmVelocity[0] + this.hands[id].palmVelocity[1] * this.hands[id].palmVelocity[1] + this.hands[id].palmVelocity[2] * this.hands[id].palmVelocity[2]); ;
+
+  //calculate acceleration from current speed and last speed
+  var acc = 0;
+  var count = 0;
+  if(this.hands[id].speedBuffer.length > 0)
+  {
+    acc = speed - this.hands[id].speedBuffer[this.hands[id].speedBuffer.length -1];
+    count++;
+  }
+
+  //smoothing acceleration
+  for(var i=1; i<this.smoothing-1; i++)
+  {
+    if(this.hands[id].speedBuffer.length - i > 0 && this.hands[id].speedBuffer.length - i-1 >=0)
     {
-      this.current_velocity[h] = [0,0,0];
+      acc += this.hands[id].speedBuffer[this.hands[id].speedBuffer.length - i] - this.hands[id].speedBuffer[this.hands[id].speedBuffer.length - i-1];
+      count++;
     }
-    if(!this.current_acceleration[h])
+  }
+
+  acc /= count;
+
+  //Save speed to buffer and shift if necessary.
+  this.hands[id].speedBuffer.push(speed);
+  if(this.hands[id].speedBuffer.length > this.peakDetectionSamples)
+  {
+    this.hands[id].speedBuffer.shift();
+  }
+  //Save acceleration to buffer and shift if necessary.
+  this.hands[id].accBuffer.push(acc);
+  if(this.hands[id].accBuffer.length > this.peakDetectionSamples)
+  {
+    this.hands[id].accBuffer.shift();
+  }
+
+  //Copy all the original attributes of the Leap hand to our extended hand
+  var keys = Object.keys(frame.hands[h]);
+  for(var i=0; i<keys.length; i++)
+  {
+    this.hands[id][keys[i]] = frame.hands[h][keys[i]];
+  }
+}
+
+LeapControl.prototype.detectPeaks = function (id)
+{
+  if(this.hands[id])
+  {
+
+    //Mean and standard deviation
+    var meanSpeed = 0;
+    var sdSpeed = 0;
+    var meanAcc = 0;
+    var sdAcc = 0;
+
+    //====================speed====================
+    //calculating mean
+    for(var i=0; i<this.hands[id].speedBuffer.length; i++)
     {
-      this.current_acceleration[h] = [0,0,0];
+      meanSpeed += this.hands[id].speedBuffer[i];
+    }
+    meanSpeed /= this.hands[id].speedBuffer.length;
+
+    //calculating standard deviation
+    for(var i=0; i<this.hands[id].speedBuffer.length; i++)
+    {
+      var diff = Math.abs(meanSpeed - this.hands[id].speedBuffer[i])
+      sdSpeed += diff * diff;
+    }
+    sdSpeed /= Math.sqrt(this.hands[id].speedBuffer.length);
+
+    //check latest value for peak
+    if(this.hands[id].speedBuffer[this.hands[id].speedBuffer.length-1] > meanSpeed + this.threshold * sdSpeed)
+    {
+      //this.velocityPeakEvent(this.hands[id].speedBuffer[this.hands[id].speedBuffer.length-1]);
     }
 
-
-    var last_velocity = this.current_velocity[h];
-    this.current_velocity[h] = [0,0,0];
-
-    for(var i=1; i<this.frames.length; i++)
+    //====================Acceleration====================
+    //calculating mean
+    for(var i=0; i<this.hands[id].accBuffer.length; i++)
     {
-      if(this.frames[i].hands[h] && this.frames[i-1].hands[h])
+      meanAcc += this.hands[id].accBuffer[i];
+    }
+    meanAcc /= this.hands[id].accBuffer.length;
+
+    DEBUGValue = meanAcc;
+
+    //calculating standard deviation
+    for(var i=0; i<this.hands[id].accBuffer.length; i++)
+    {
+      var diff = meanAcc - this.hands[id].accBuffer[i];
+      sdAcc += diff * diff;
+    }
+    sdAcc /= this.hands[id].accBuffer.length;
+    sdAcc = Math.sqrt(sdAcc);
+
+    DEBUGdeviation = this.threshold * sdAcc;
+
+    //check latest value for peak
+    if(this.hands[id].accBuffer[this.hands[id].accBuffer.length-1] > meanAcc + this.threshold * sdAcc)
+    {
+      if(!this.hands[id].accPeaking)
       {
-        var timeDIff = this.frames[i].timestamp - this.frames[i-1].timestamp;
-        this.current_velocity[h][0] += (this.frames[i].hands[h].palmPosition[0] - this.frames[i-1].hands[h].palmPosition[0])/timeDIff;
-        this.current_velocity[h][1] += (this.frames[i].hands[h].palmPosition[1] - this.frames[i-1].hands[h].palmPosition[1])/timeDIff;
-        this.current_velocity[h][2] += (this.frames[i].hands[h].palmPosition[2] - this.frames[i-1].hands[h].palmPosition[2])/timeDIff;
+        this.accelerationPeakEvent(this.hands[id].accBuffer[this.hands[id].accBuffer.length-1]);
+        this.hands[id].accPeaking = true;
       }
     }
-
-    this.current_velocity[h][0] /= this.frames.length;
-    this.current_velocity[h][1] /= this.frames.length;
-    this.current_velocity[h][2] /= this.frames.length;
-
-    if(this.frames.length >= 2)
-    {
-      this.current_acceleration[h][0] = (this.current_velocity[h][0] - last_velocity[0]);
-      this.current_acceleration[h][1] = (this.current_velocity[h][1] - last_velocity[1]);
-      this.current_acceleration[h][2] = (this.current_velocity[h][2] - last_velocity[2]);
-    }
     else {
-      this.current_acceleration[h] = [0,0,0];
+      this.hands[id].accPeaking = false;
     }
-
-    accelerationMagnitude = sqrt(this.current_acceleration[h][0]*this.current_acceleration[h][0] + this.current_acceleration[h][1]*this.current_acceleration[h][1] + this.current_acceleration[h][2]*this.current_acceleration[h][2]);
-
-    if(accelerationMagnitude - this.last_acceleration_magnitude[h] > this.threshold)
-    {
-      this.accelerationPeakEvent();
-      this.threshold = accelerationMagnitude - this.last_acceleration_magnitude[h];
-    }
-    else{
-      this.threshold *= 0.99;
-    }
-
-    this.last_acceleration_magnitude[h] = accelerationMagnitude;
   }
-};
+}
 
 LeapControl.prototype.update = function (frame) {
   if(!leapControl.connected)
@@ -143,23 +236,23 @@ LeapControl.prototype.update = function (frame) {
     this.frames.shift();
   }
 
-  this.numHands = frame.hands.length;
+  this.numActiveHands = frame.hands.length;
 
   for(var i=0; i<frame.hands.length; i++)
   {
-    this.updateHand(i, frame.hands[i]);
+    this.updateHandElements(i, frame.hands[i]);
+    this.updateHand(frame, i);
+    this.detectPeaks(frame.hands[i].id);
   }
 
-  for(var i=0; i<this.hands.length; i++)
+  for(var i=0; i<this.handsElements.length; i++)
   {
     if(!frame.hands[i])
     {
-      $(this.hands[i]).remove();
-      this.hands[i] = null;
+      $(this.handsElements[i]).remove();
+      this.handsElements[i] = null;
     }
   }
-
-  this.calculateValues();
 };
 
 var leapControl = new LeapControl();

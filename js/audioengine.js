@@ -156,6 +156,7 @@ var AudioFile = function (filename)
   this.buffer = null;
   this.preload();
   this.ready = false;
+  this.volume = 0.5;
 }
 
 AudioFile.prototype.preload = function () {
@@ -190,7 +191,7 @@ AudioFile.prototype.play = function (time)
   else {
     source.start(0);
   }
-  g.gain.setValueAtTime(0.5, audio.context.currentTime);
+  g.gain.setValueAtTime(this.volume, audio.context.currentTime);
   source.connect(g);
   g.connect(audio.context.destination);
 }

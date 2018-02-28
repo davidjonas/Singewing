@@ -185,12 +185,22 @@ Singewing.prototype.updateUserList = function () {
 };
 
 //TX - beat
-Singewing.prototype.beat = function()
+Singewing.prototype.beat = function(volume)
 {
   if(this.registered)
   {
     var correctedTime = new Date().getTime() + this.offset;
+
+    if(volume)
+    {
+      audio.sounds[this.selectedSound].volume = volume;
+      console.log(volume);
+    }
     audio.sounds[this.selectedSound].play();
+    if(volume)
+    {
+      audio.sounds[this.selectedSound].volume = 1;
+    }
 
     //clear if current beat interval bigger than 2 seconds;
     if(this.beats.length > 0 && (correctedTime - this.beats[this.beats.length-1]) > 2000)
@@ -289,7 +299,8 @@ leapControl.onAccelerationPeak(function (value) {
   {
     if(singewing.currentPhase == 0)
     {
-      singewing.beat();
+
+      singewing.beat(map(value, 0, 250, 0, 1));
       singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
       beats++;
     }

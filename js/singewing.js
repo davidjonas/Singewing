@@ -283,3 +283,15 @@ var singewing = new Singewing();
 
 singewing.ping();
 setInterval(function () {singewing.ping()}, 5000);
+
+leapControl.onAccelerationPeak(function (value) {
+  if(singewing.registered)
+  {
+    if(singewing.currentPhase == 0)
+    {
+      singewing.beat();
+      singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
+      beats++;
+    }
+  }
+});

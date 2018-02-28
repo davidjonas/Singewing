@@ -35,17 +35,17 @@ LeapControl.prototype.connectedEvent = function ()
 {
   for(var i=0; i<this.connectHandlers.length; i++)
   {
-    connectHandlers[i]();
+    this.connectHandlers[i]();
   }
 };
 
 LeapControl.prototype.accelerationPeakEvent = function (value)
 {
   //console.log("peak");
-  audio.click(audio.context.currentTime,4000);
+  //audio.click(audio.context.currentTime,4000);
   for(var i=0; i<this.accelerationPeakHandlers.length; i++)
   {
-    accelerationPeakHandlers[i](value);
+    this.accelerationPeakHandlers[i](value);
   }
 };
 
@@ -53,7 +53,7 @@ LeapControl.prototype.velocityPeakEvent = function ()
 {
   for(var i=0; i<this.velocityPeakHandlers.length; i++)
   {
-    velocityPeakHandlers[i](value);
+    this.velocityPeakHandlers[i](value);
   }
 };
 

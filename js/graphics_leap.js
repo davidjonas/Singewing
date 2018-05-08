@@ -1,7 +1,3 @@
-//This script has been disabled in index.html
-//This was demonstrator version 0.1 and it was replaced on leap branch by graphics_leap
-//To reactivate it replace graphics_leap for graphics in index.html 
-
 var radius;
 var animation;
 var animations = [];
@@ -10,6 +6,9 @@ var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 var beats = 0;
 var BPMAvg = 0;
+
+var trailSize = 20;
+var trails = [];
 
 function iOS() {
 
@@ -38,7 +37,7 @@ window.mobileAndTabletcheck = function() {
 };
 
 var phases = [
-  //+++++++++++++++++++++++ Phase 0 -- Choose your tempo+++++++++++++++++++++++
+  //+++++++++++++++++++++++ Phase 0 -- Trails +++++++++++++++++++++++
   function (){
 
     textAlign(CENTER, CENTER);
@@ -57,78 +56,52 @@ var phases = [
       text('slower',width/2,height*0.35);
     }
 
-    for(var i=0; i<singewing.users.length; i++)
+    for(var i=0; i<leapControl.hands.length; i++)
     {
-      var alpha = 7;
-      if(singewing.users[i]["name"] === singewing.name)
+      if(leapControl.hands[i] && leapControl.hands[i].active)
       {
-        alpha = 50;
-      }
-
-      if(animations[i] === undefined)
-      {
-        animations[i] = 0;
-      }
-      else {
-        animations[i] += singewing.users[i]["BPM"]/1000;
-      }
-
-      var matches = singewing.findMatches();
-
-      if(matches.length != 0)
-      {
-        var found = false;
-        for(var m=0; m<matches.length; m++)
+        var x = map(leapControl.hands[i].palmPosition[0], -300, 300, 0, width);
+        var y = map(leapControl.hands[i].palmPosition[1], 50, 350, height, 0);
+        if(!trails[i])
         {
-          if(matches[m] == i){
-            found = true;
+          trails[i] = [];
+        }
+
+        trails[i].push([x, y]);
+        if(trails[i].length >= trailSize)
+        {
+          trails[i].shift();
+        }
+
+        for(var p=0; p<trails[i].length; p++)
+        {
+          var thickness = map(p, 0, trails[i].length, 5, 10);
+          var alpha = map(p, 0, trails[i].length, 50, 180);
+          if(p>0)
+          {
+            stroke(singewing.selectedColor, singewing.users[0].color[1], singewing.users[0].color[2], alpha);
+            strokeCap(SQUARE);
+            strokeWeight(thickness);
+            line(trails[i][p][0], trails[i][p][1], trails[i][p-1][0], trails[i][p-1][1]);
+            strokeWeight(thickness/2);
+            line(trails[i][p][0], trails[i][p][1], trails[i][p-1][0], trails[i][p-1][1]);
+          }
+
+          if(p == trails[i].length-1 && singewing.users[0])
+          {
+            fill(singewing.selectedColor, singewing.users[0].color[1], singewing.users[0].color[2], alpha);
+            noStroke();
+            ellipse(trails[i][p][0], trails[i][p][1], thickness, thickness);
           }
         }
-        if(found)
+      }
+      else{
+        if(trails[i] && trails[i].length > 0)
         {
-          alpha = 50;
-          drawWave(i, alpha, true);
-          var numUsers = singewing.users.length;
-          var posY = height*0.9;
-          var posX = (i*width*0.8/numUsers) + width*0.2;
-          strokeWeight(3);
-          stroke(255);
-          ellipse(posX, posY, 30, 30);
-          noStroke();
-          strokeWeight(1);
-        }
-        else {
-          drawWave(i, alpha, false);
+          trails[i] = [];
         }
       }
-      else {
-        drawWave(i, alpha, false);
-      }
-
-      if(singewing.users[i]["beat"])
-      {
-        if(singewing.users[i]["beat"])
-        {
-          singewing.users[i]["beat"]=false;
-        }
-      }
-
-      drawUserLegend(i, alpha);
     }
-
-    animation += 0.013;
-  },
-  //+++++++++++++++++++++++ Phase 1 --  Match and lock tempos+++++++++++++++++++++++
-  function (){
-    textAlign(CENTER, CENTER);
-    textSize(width*0.03);
-    fill(255, 100);
-    text("Found the group tempo",width/2,height*0.1);
-    fill(255);
-    textSize(width*0.1);
-    text(BPMAvg,width/2,height*0.2);
-
-    var radius = 80;
 
     for(var i=0; i<singewing.users.length; i++)
     {
@@ -138,11 +111,12 @@ var phases = [
         alpha = 50;
       }
 
-      drawPattern(singewing.users[i]["pattern"], width/2, height/2, radius, singewing.users[i]["color"][0], singewing.users[i]["color"][1], singewing.users[i]["color"][2]);
-      radius += 20;
       drawUserLegend(i, alpha);
     }
-
+    animation += 0.013;
+  },
+  //+++++++++++++++++++++++ Phase 1 --  Matched tempos +++++++++++++++++++++++
+  function (){
 
   },
 ];

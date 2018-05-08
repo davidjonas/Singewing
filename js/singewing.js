@@ -194,7 +194,6 @@ Singewing.prototype.beat = function(volume)
     if(volume)
     {
       audio.sounds[this.selectedSound].volume = volume;
-      console.log(volume);
     }
     audio.sounds[this.selectedSound].play();
     if(volume)

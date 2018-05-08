@@ -106,7 +106,10 @@ LeapControl.prototype.updateHand = function (frame, h) {
     this.hands[id].accBuffer = [];
     this.hands[id].accPeaking = false;
     this.hands[id].speedPeaking = false;
+
   }
+
+  this.hands[id].active = true;
 
   //Calculate the speed as the magnitude of the velocity.
   var speed = Math.sqrt(this.hands[id].palmVelocity[0] * this.hands[id].palmVelocity[0] + this.hands[id].palmVelocity[1] * this.hands[id].palmVelocity[1] + this.hands[id].palmVelocity[2] * this.hands[id].palmVelocity[2]); ;
@@ -238,21 +241,31 @@ LeapControl.prototype.update = function (frame) {
 
   this.numActiveHands = frame.hands.length;
 
+  for(var i=0; i<this.hands.length; i++)
+  {
+    if(this.hands[i])
+    {
+      this.hands[i].active = false;
+    }
+  }
+
   for(var i=0; i<frame.hands.length; i++)
   {
-    this.updateHandElements(i, frame.hands[i]);
+    //DEBUG: creating hand elements in HTML
+    //this.updateHandElements(i, frame.hands[i]);
     this.updateHand(frame, i);
     this.detectPeaks(frame.hands[i].id);
   }
 
-  for(var i=0; i<this.handsElements.length; i++)
+  //DEBUG: Removing hand element on HTML if the hand disapeared
+  /*for(var i=0; i<this.handsElements.length; i++)
   {
     if(!frame.hands[i])
     {
       $(this.handsElements[i]).remove();
       this.handsElements[i] = null;
     }
-  }
+  }*/
 };
 
 var leapControl = new LeapControl();

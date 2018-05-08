@@ -25,4 +25,9 @@ $(function () {
   $("#debug").click(function(){
     $("#debug").toggleClass("closed");
   });
+
+  var slider = document.getElementById("myRange");
+  slider.oninput = function() {
+      trailSize = this.value;
+  }
 });

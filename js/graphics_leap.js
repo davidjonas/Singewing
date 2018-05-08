@@ -43,7 +43,7 @@ var phases = [
     textAlign(CENTER, CENTER);
     textSize(width*0.03);
     fill(255, 100);
-    text("Tap / click until you find your tempo.",width/2,height*0.1);
+    text("Wave your hand until you find your tempo.",width/2,height*0.1);
     textSize(width*0.1);
     text(singewing.BPM,width/2,height*0.2);
 
@@ -294,7 +294,7 @@ function draw()
 
 function mouseClicked()
 {
-    if(singewing.registered)
+    /* if(singewing.registered)
     {
       if(singewing.currentPhase == 0)
       {
@@ -302,7 +302,7 @@ function mouseClicked()
         singewing.users[singewing.findUser(singewing.name)]["beat"] = true;
         beats++;
       }
-    }
+    } */
 }
 
 function touchStarted()

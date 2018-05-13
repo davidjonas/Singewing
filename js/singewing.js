@@ -159,6 +159,12 @@ var Singewing = function () {
     self.users[index]["pattern"] = args["pattern"];
     audio.startSound(index, self.users[index]["sound"], self.users[index]["BPM"], self.users[index]["pattern"]);
   });
+
+  //RX - leap
+  this.socket.on("leap", function (args){
+    var index = args['u'];
+    self.users[index]['p'] = args['p'];
+  });
 };
 
 //TX - ping

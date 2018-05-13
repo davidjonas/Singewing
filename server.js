@@ -166,6 +166,19 @@ io.on('connection', function(socket){
     }
   });
 
+  //Leap update == example with one hand: [134, 205]
+  socket.on('leap', function (args){
+    var userIndex = findUser(socket.id);
+    if(userIndex != null)
+    {
+      socket.broadcast.emit('leap', {'u': userIndex, 'p':args});
+    }
+    else {
+      log("user not found");
+    }
+  });
+
+
   //Disconnect
   socket.on('disconnect', function(){
     log('User disconnected');

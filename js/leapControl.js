@@ -13,6 +13,7 @@ var LeapControl = function ()
   this.velocityPeakHandlers = [];
   this.accelerationPeakHandlers = [];
   this.connectHandlers = [];
+  this.updateHandlers = [];
   this.threshold = 1.5;
 };
 
@@ -29,6 +30,11 @@ LeapControl.prototype.onAccelerationPeak = function (callback)
 LeapControl.prototype.onConnect = function (callback)
 {
   this.connectHandlers.push(callback);
+};
+
+LeapControl.prototype.onUpdate = function (callback)
+{
+  this.updateHandlers.push(callback);
 };
 
 LeapControl.prototype.connectedEvent = function ()
@@ -153,6 +159,11 @@ LeapControl.prototype.updateHand = function (frame, h) {
   for(var i=0; i<keys.length; i++)
   {
     this.hands[id][keys[i]] = frame.hands[h][keys[i]];
+  }
+
+  for(var i=0; i<this.updateHandlers.length; i++)
+  {
+    this.updateHandlers[i](this.hands[id]);
   }
 }
 

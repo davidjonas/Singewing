@@ -18,6 +18,7 @@ $(function () {
   $("#introForm").submit(function (e) {
     e.preventDefault();
     singewing.register();
+    audio.context.resume();
   });
   $("#name").focus().click();
 

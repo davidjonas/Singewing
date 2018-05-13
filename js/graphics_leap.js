@@ -8,7 +8,8 @@ var beats = 0;
 var BPMAvg = 0;
 
 var trailSize = 20;
-var trails = [];
+var localTrails = [];
+var userTrails = [];
 
 function iOS() {
 
@@ -37,7 +38,7 @@ window.mobileAndTabletcheck = function() {
 };
 
 var phases = [
-  //+++++++++++++++++++++++ Phase 0 -- Trails +++++++++++++++++++++++
+  //+++++++++++++++++++++++ Phase 0 -- localTrails +++++++++++++++++++++++
   function (){
 
     textAlign(CENTER, CENTER);
@@ -62,43 +63,53 @@ var phases = [
       {
         var x = map(leapControl.hands[i].palmPosition[0], -300, 300, 0, width);
         var y = map(leapControl.hands[i].palmPosition[1], 50, 350, height, 0);
-        if(!trails[i])
+
+        singewing.socket.emit('leap', [leapControl.hands[i].palmPosition[0], leapControl.hands[i].palmPosition[1]]);
+
+        if(!localTrails[i])
         {
-          trails[i] = [];
+          localTrails[i] = [];
         }
 
-        trails[i].push([x, y]);
-        if(trails[i].length >= trailSize)
+        localTrails[i].push([x, y]);
+        if(localTrails[i].length >= trailSize)
         {
-          trails[i].shift();
+          localTrails[i].shift();
         }
 
-        for(var p=0; p<trails[i].length; p++)
+        for(var p=0; p<localTrails[i].length; p++)
         {
-          var thickness = map(p, 0, trails[i].length, 5, 10);
-          var alpha = map(p, 0, trails[i].length, 50, 180);
+          var thickness = map(p, 0, localTrails[i].length, 5, 10);
+          var alpha = map(p, 0, localTrails[i].length, 50, 180);
           if(p>0)
           {
             stroke(singewing.selectedColor, singewing.users[0].color[1], singewing.users[0].color[2], alpha);
             strokeCap(SQUARE);
-            strokeWeight(thickness);
-            line(trails[i][p][0], trails[i][p][1], trails[i][p-1][0], trails[i][p-1][1]);
+            if(!singewing.users[singewing.findUser(singewing.name)]["beat"])
+            {
+              strokeWeight(thickness);
+            }
+            else{
+              strokeWeight(thickness*2);
+              singewing.users[singewing.findUser(singewing.name)]["beat"] = false;
+            }
+            line(localTrails[i][p][0], localTrails[i][p][1], localTrails[i][p-1][0], localTrails[i][p-1][1]);
             strokeWeight(thickness/2);
-            line(trails[i][p][0], trails[i][p][1], trails[i][p-1][0], trails[i][p-1][1]);
+            line(localTrails[i][p][0], localTrails[i][p][1], localTrails[i][p-1][0], localTrails[i][p-1][1]);
           }
 
-          if(p == trails[i].length-1 && singewing.users[0])
+          if(p == localTrails[i].length-1 && singewing.users[0])
           {
             fill(singewing.selectedColor, singewing.users[0].color[1], singewing.users[0].color[2], alpha);
             noStroke();
-            ellipse(trails[i][p][0], trails[i][p][1], thickness, thickness);
+            ellipse(localTrails[i][p][0], localTrails[i][p][1], thickness, thickness);
           }
         }
       }
       else{
-        if(trails[i] && trails[i].length > 0)
+        if(localTrails[i] && localTrails[i].length > 0)
         {
-          trails[i] = [];
+          localTrails[i] = [];
         }
       }
     }
@@ -109,6 +120,52 @@ var phases = [
       if(singewing.users[i]["name"] === singewing.name)
       {
         alpha = 50;
+      }
+
+      if(singewing.users[i]['p'] && (singewing.users[i]['p'][0] != 0 || singewing.users[i]['p'][1] != 0) )
+      {
+        var x = map(singewing.users[i]['p'][0], -300, 300, 0, width);
+        var y = map(singewing.users[i]['p'][1], 50, 350, height, 0);
+
+        if(!userTrails[i])
+        {
+          userTrails[i] = [];
+        }
+
+        userTrails[i].push([x, y]);
+        if(userTrails[i].length >= trailSize)
+        {
+          userTrails[i].shift();
+        }
+
+        for(var p=0; p<userTrails[i].length; p++)
+        {
+          var thickness = map(p, 0, userTrails[i].length, 5, 10);
+          var alpha = map(p, 0, userTrails[i].length, 50, 180);
+          if(p>0)
+          {
+            stroke(singewing.users[i].color[0], singewing.users[i].color[1], singewing.users[i].color[2], alpha);
+            strokeCap(SQUARE);
+            if(!singewing.users[singewing.findUser(singewing.name)]["beat"])
+            {
+              strokeWeight(thickness);
+            }
+            else{
+              strokeWeight(thickness*2);
+              singewing.users[singewing.findUser(singewing.name)]["beat"] = false;
+            }
+            line(userTrails[i][p][0], userTrails[i][p][1], userTrails[i][p-1][0], userTrails[i][p-1][1]);
+            strokeWeight(thickness/2);
+            line(userTrails[i][p][0], userTrails[i][p][1], userTrails[i][p-1][0], userTrails[i][p-1][1]);
+          }
+
+          if(p == userTrails[i].length-1 && singewing.users[0])
+          {
+            fill(singewing.users[i].color[0], singewing.users[i].color[1], singewing.users[i].color[2], alpha);
+            noStroke();
+            ellipse(userTrails[i][p][0], userTrails[i][p][1], thickness, thickness);
+          }
+        }
       }
 
       drawUserLegend(i, alpha);
@@ -221,6 +278,7 @@ function setup()
   textAlign(CENTER, CENTER);
   colorMode(HSB, 255);
   textFont(myFont);
+  frameRate(24);
 
   for(var i=0; i < audio.sounds.length; i++)
   {

@@ -112,7 +112,10 @@ var Singewing = function () {
       var index = self.findUser(args["socketId"]);
       self.users[index]["beat"] = true;
       self.users[index]["BPM"] = args["BPM"];
-      if(audio.layers[index])
+
+      audio.sounds[self.users[index]["sound"]].play();
+
+      /* if(audio.layers[index])
       {
         //console.log("Setting tempo to " + args["BPM"]);
         audio.setTempo(index, args["BPM"]);
@@ -124,7 +127,7 @@ var Singewing = function () {
           //audio.startSound(index, 1, args["BPM"]);
           audio.startSound(index, self.users[index]["sound"], args["BPM"], self.users[index]["pattern"]);
         }
-      }
+      } */
     }
   });
 

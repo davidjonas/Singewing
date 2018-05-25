@@ -277,8 +277,8 @@ input:-webkit-autofill {
 .slidecontainer {
     width: 100px; /* Width of the outside container */
     position: absolute;
-    top:10px;
-    right:10px;
+    top:84px;
+    left:50px;
     z-index: 1001;
 }
 

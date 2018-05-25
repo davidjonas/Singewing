@@ -93,11 +93,11 @@ var Singewing = function () {
         {
           if(audio.layers[i])
           {
-            audio.setTempo(i, self.users[i]["BPM"]);
+            //audio.setTempo(i, self.users[i]["BPM"]);
           }
           else {
             //audio.startClick(i, 100, self.users[i]["BPM"]);
-            audio.startSound(i, self.users[i]["sound"], self.users[i]["BPM"]);
+            //audio.startSound(i, self.users[i]["sound"], self.users[i]["BPM"]);
           }
         }
       }
@@ -140,19 +140,21 @@ var Singewing = function () {
   //RX - phase
   this.socket.on("phase", function(args)
   {
-    self.clearLayers();
-    self.currentPhase = args["number"];
-    if(self.currentPhase == 1)
+    //self.clearLayers();
+    //self.currentPhase = args["number"];
+    if(args["number"] == 1)
     {
       BPMAvg = args["data"]["BPM"];
       self.BPM = args["data"]["BPM"];
-      audio.beet.tempo = self.BPM;
-      var el = $('<div id="pattern"><input type="text" id="patternInput" value="'+self.users[self.findUser(self.name)]["pattern"]+'"/> <input id="patternApplyButton" type="button" value="apply" /></div>');
-      $(el).css("margin-top", (100 + 20 * self.users.length) + "px" );
-      $("#graphics").append(el);
-      $("#patternApplyButton").click(function (){
-                self.setPattern($("#patternInput").val());
-      });
+      //audio.beet.tempo = self.BPM;
+      //var el = $('<div id="pattern"><input type="text" id="patternInput" value="'+self.users[self.findUser(self.name)]["pattern"]+'"/> <input id="patternApplyButton" type="button" value="apply" /></div>');
+      //$(el).css("margin-top", (100 + 20 * self.users.length) + "px" );
+      //$("#graphics").append(el);
+      //$("#patternApplyButton").click(function (){
+      //          self.setPattern($("#patternInput").val());
+      //});
+
+      score();
     }
   });
 
@@ -165,8 +167,11 @@ var Singewing = function () {
 
   //RX - leap
   this.socket.on("leap", function (args){
-    var index = args['u'];
-    self.users[index]['p'] = args['p'];
+    if(self.registered)
+    {
+      var index = args['u'];
+      self.users[index]['p'] = args['p'];
+    }
   });
 };
 

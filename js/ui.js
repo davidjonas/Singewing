@@ -1,4 +1,6 @@
 
+var points = 0;
+
 var registrationSuccess = function () {
   $("#intro").fadeTo(500, 0, function(){
     $("#intro").hide();
@@ -9,6 +11,11 @@ var registrationSuccess = function () {
 var registrationError = function () {
   $("#registrationError").show();
   $("#name").val("");
+}
+
+var score = function () {
+  points++;
+  pointTextSize = 80;
 }
 
 $(function () {
